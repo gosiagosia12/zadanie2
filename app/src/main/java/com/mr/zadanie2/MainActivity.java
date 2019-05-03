@@ -19,18 +19,36 @@ public class MainActivity extends AppCompatActivity
         TaskFragment.OnListFragmentInteractionListener,
         DeleteDialog.OnDeleteDialogInteractionListener
 {
-
+    private TaskListContent.Task currentTask;
+    private final String CURRENT_TASK_KEY = "CurrentTask";
     public static final int CONTACT_REQUEST = 1;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+        if (savedInstanceState != null) {
+            currentTask = savedInstanceState.getParcelable(CURRENT_TASK_KEY);
+        }
+        FloatingActionButton fabAdd = findViewById(R.id.fabAdd);
+        fabAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getApplicationContext(), ActivityAdd.class);
+                Intent in = new Intent();
+                in.putExtra("Camera", false);
+                setResult(RESULT_OK, in);
+                startActivityForResult(intent, CONTACT_REQUEST);
+            }
+        });
+
+        FloatingActionButton fabCameraAdd = findViewById(R.id.fabCameraAdd);
+        fabCameraAdd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getApplicationContext(), ActivityAdd.class);
+                Intent in = new Intent();
+                in.putExtra("Camera", true);
+                setResult(RESULT_OK, in);
                 startActivityForResult(intent, CONTACT_REQUEST);
             }
         });
@@ -87,6 +105,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onListFragmentClickInteraction(TaskListContent.Task task, int position) {
         Toast.makeText(this, getString(R.string.item_selected_msg) + position, Toast.LENGTH_SHORT).show();
+        currentTask = task;
         if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE){
             displayTaskInFragment(task);
         }else{
@@ -140,6 +159,22 @@ public class MainActivity extends AppCompatActivity
                             showDeleteDialog();
                         }
                     }).show();
+        }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState){
+        if(currentTask != null)
+            outState.putParcelable(CURRENT_TASK_KEY, currentTask);
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onResume(){
+        super.onResume();
+        if(getResources().getConfiguration().orientation== Configuration.ORIENTATION_LANDSCAPE){
+            if(currentTask != null)
+                displayTaskInFragment(currentTask);
         }
     }
 }

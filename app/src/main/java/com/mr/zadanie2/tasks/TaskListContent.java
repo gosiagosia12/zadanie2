@@ -19,6 +19,9 @@ public class TaskListContent {
     /**
      * An array of sample (dummy) items.
      */
+
+
+
     public static final List<Task> ITEMS = new ArrayList<Task>();
 
     /**
@@ -61,7 +64,7 @@ public class TaskListContent {
         public final String title;
         public final String director;
       //  public final String premiere;
-        public final String picPath;
+        public String picPath;
 
         public Task(String id, String title, String director/*, String premiere*/) {
             this.id = id;
@@ -111,11 +114,20 @@ public class TaskListContent {
         //    dest.writeString(premiere);
             dest.writeString(picPath);
         }
+
+        public void setPicPath(String path){
+            this.picPath = path;
+        }
     }
 
     public static void removeItem(int position){
         String itemId = ITEMS.get(position).id;
         ITEMS.remove(position);
         ITEM_MAP.remove(itemId);
+    }
+
+    public static void clearList(){
+        ITEMS.clear();
+        ITEM_MAP.clear();
     }
 }

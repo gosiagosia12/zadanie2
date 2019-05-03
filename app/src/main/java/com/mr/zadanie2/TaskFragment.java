@@ -1,6 +1,8 @@
 package com.mr.zadanie2;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -92,5 +94,17 @@ public class TaskFragment extends Fragment {
         // TODO: Update argument type and name
         void onListFragmentClickInteraction(TaskListContent.Task task, int position);
         void onDeleteClick(int position);
+    }
+
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data){
+        if(requestCode == Activity.RESULT_OK){
+            if(data != null){
+                boolean changeDataSet = data.getBooleanExtra(TaskInfoActivity.DATA_CHANGED_KEY, false);
+                if(changeDataSet)
+                    notifyDataChange();
+            }
+        }
     }
 }

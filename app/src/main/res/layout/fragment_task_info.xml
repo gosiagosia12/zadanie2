@@ -31,7 +31,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/taskInfoTitle"
-        app:srcCompat="@drawable/circle_drawable_green" />
+        app:srcCompat="@drawable/avatar_3" />
     <TextView
         android:id="@+id/taskInfoDirector"
         android:layout_width="0dp"

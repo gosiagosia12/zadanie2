@@ -1000,11 +1000,23 @@ drawable abc_textfield_search_activated_mtrl_alpha
 drawable abc_textfield_search_default_mtrl_alpha
 drawable abc_textfield_search_material
 drawable abc_vector_test
+drawable avatar_1
+drawable avatar_10
+drawable avatar_11
+drawable avatar_12
+drawable avatar_14
+drawable avatar_15
+drawable avatar_16
+drawable avatar_2
+drawable avatar_3
+drawable avatar_4
+drawable avatar_5
+drawable avatar_6
+drawable avatar_7
+drawable avatar_8
+drawable avatar_9
 drawable avd_hide_password
 drawable avd_show_password
-drawable circle_drawable_green
-drawable circle_drawable_orange
-drawable circle_drawable_red
 drawable design_bottom_navigation_item_background
 drawable design_fab_background
 drawable design_ic_visibility
@@ -1111,7 +1123,8 @@ id enterAlwaysCollapsed
 id exitUntilCollapsed
 id expand_activities_button
 id expanded_menu
-id fab
+id fabAdd
+id fabCameraAdd
 id fill
 id fill_horizontal
 id fill_vertical
@@ -1407,6 +1420,7 @@ string hide_bottom_view_on_scroll_behavior
 string item_selected_msg
 string long_click_msg
 string mtrl_chip_close_icon_content_description
+string myFileprovider
 string password_toggle_content_description
 string path_password_eye
 string path_password_eye_mask_strike_through
@@ -1998,3 +2012,4 @@ styleable Toolbar android_gravity android_minHeight buttonGravity collapseConten
 styleable View android_theme android_focusable paddingEnd paddingStart theme
 styleable ViewBackgroundHelper android_background backgroundTint backgroundTintMode
 styleable ViewStubCompat android_id android_layout android_inflatedId
+xml file_paths

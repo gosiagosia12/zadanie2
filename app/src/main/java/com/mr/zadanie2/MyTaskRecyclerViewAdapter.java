@@ -1,6 +1,7 @@
 package com.mr.zadanie2;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -45,25 +46,64 @@ public class MyTaskRecyclerViewAdapter extends RecyclerView.Adapter<MyTaskRecycl
         final String picPath = task.picPath;
         Context context = holder.mView.getContext();
         if(picPath != null && !picPath.isEmpty()){
-            if(picPath.contains("drawable")){
+            if(picPath.contains("avatar")){
                 Drawable taskDrawable;
                 switch(picPath){
-                    case "drawable 1":
-                        taskDrawable = context.getResources().getDrawable(R.drawable.circle_drawable_green);
+                    case "avatar 1":
+                        taskDrawable = context.getResources().getDrawable(R.drawable.avatar_1);
                         break;
-                    case "drawable 2":
-                        taskDrawable = context.getResources().getDrawable(R.drawable.circle_drawable_orange);
+                    case "avatar 2":
+                        taskDrawable = context.getResources().getDrawable(R.drawable.avatar_2);
                         break;
-                    case "drawable 3":
-                        taskDrawable = context.getResources().getDrawable(R.drawable.circle_drawable_red);
+                    case "avatar 3":
+                        taskDrawable = context.getResources().getDrawable(R.drawable.avatar_3);
+                        break;
+                    case "avatar 4":
+                        taskDrawable = context.getResources().getDrawable(R.drawable.avatar_4);
+                        break;
+                    case "avatar 5":
+                        taskDrawable = context.getResources().getDrawable(R.drawable.avatar_5);
+                        break;
+                    case "avatar 6":
+                        taskDrawable = context.getResources().getDrawable(R.drawable.avatar_6);
+                        break;
+                    case "avatar 7":
+                        taskDrawable = context.getResources().getDrawable(R.drawable.avatar_7);
+                        break;
+                    case "avatar 8":
+                        taskDrawable = context.getResources().getDrawable(R.drawable.avatar_8);
+                        break;
+                    case "avatar 9":
+                        taskDrawable = context.getResources().getDrawable(R.drawable.avatar_9);
+                        break;
+                    case "avatar 10":
+                        taskDrawable = context.getResources().getDrawable(R.drawable.avatar_10);
+                        break;
+                    case "avatar 11":
+                        taskDrawable = context.getResources().getDrawable(R.drawable.avatar_11);
+                        break;
+                    case "avatar 12":
+                        taskDrawable = context.getResources().getDrawable(R.drawable.avatar_12);
+                        break;
+                    case "avatar 14":
+                        taskDrawable = context.getResources().getDrawable(R.drawable.avatar_14);
+                        break;
+                    case "avatar 15":
+                        taskDrawable = context.getResources().getDrawable(R.drawable.avatar_15);
+                        break;
+                    case "avatar 16":
+                        taskDrawable = context.getResources().getDrawable(R.drawable.avatar_16);
                         break;
                     default:
-                        taskDrawable = context.getResources().getDrawable(R.drawable.circle_drawable_green);
+                        taskDrawable = context.getResources().getDrawable(R.drawable.avatar_3);
                 }
                 holder.mItemImageView.setImageDrawable(taskDrawable);
+            }else{
+                Bitmap cameraImage = PicUtils.decodePic(task.picPath, 128, 128);
+                holder.mItemImageView.setImageBitmap(cameraImage);
             }
         }else{
-            holder.mItemImageView.setImageDrawable(context.getResources().getDrawable(R.drawable.circle_drawable_green));
+            holder.mItemImageView.setImageDrawable(context.getResources().getDrawable(R.drawable.avatar_3));
         }
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
