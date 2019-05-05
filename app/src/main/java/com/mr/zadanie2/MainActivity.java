@@ -43,6 +43,7 @@ public class MainActivity extends AppCompatActivity
         if (savedInstanceState != null) {
             currentTask = savedInstanceState.getParcelable(CURRENT_TASK_KEY);
         }
+
         restoreFromJson();
         FloatingActionButton fabAdd = findViewById(R.id.fabAdd);
         fabAdd.setOnClickListener(new View.OnClickListener() {
@@ -96,6 +97,7 @@ public class MainActivity extends AppCompatActivity
                            taskPremiere = getString(R.string.default_premiere);
                 TaskListContent.addItem(new TaskListContent.Task("Task." + TaskListContent.ITEMS.size() + 1, taskTitle, taskDirector, taskPremiere, picPath));
             }
+            Toast.makeText(this, "Dodano nowy element do listy", Toast.LENGTH_SHORT).show();
             ((TaskFragment) getSupportFragmentManager().findFragmentById(R.id.taskFragment)).notifyDataChange();
         }
         else if(resultCode == RESULT_CANCELED) {}
@@ -119,6 +121,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void restoreFromJson(){
+        Toast.makeText(this, "Wczytywanie listy...", Toast.LENGTH_SHORT).show();
         FileInputStream inputStream;
         int DEFAULT_BUFFER_SIZE = 10000;
         Gson gson = new Gson();
@@ -155,6 +158,7 @@ public class MainActivity extends AppCompatActivity
 
     protected void onDestroy(){
         saveTasksToJson();
+        Toast.makeText(this, "Wszystkie elementy listy zostały zapisane", Toast.LENGTH_LONG).show();
         super.onDestroy();
     }
 
@@ -179,7 +183,8 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onListFragmentClickInteraction(TaskListContent.Task task, int position) {
-        Toast.makeText(this, getString(R.string.item_selected_msg) + position, Toast.LENGTH_SHORT).show();
+        int pos = position + 1;
+        Toast.makeText(this, getString(R.string.item_selected_msg) + " " + pos + ". element listy", Toast.LENGTH_SHORT).show();
         currentTask = task;
         if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE){
             displayTaskInFragment(task);
@@ -191,7 +196,6 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onDeleteClick(int position) {
-        Toast.makeText(this, getString(R.string.long_click_msg) + position, Toast.LENGTH_SHORT).show();
         showDeleteDialog();
         currentItemPosition = position;
     }
@@ -218,8 +222,10 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onDialogPositiveClick(DialogFragment dialog) {
-        if(currentItemPosition != -1 && currentItemPosition < TaskListContent.ITEMS.size())
-            TaskListContent.removeItem(currentItemPosition);
+        if(currentItemPosition != -1 && currentItemPosition < TaskListContent.ITEMS.size()){
+            int pos = currentItemPosition + 1;
+            Toast.makeText(this, getString(R.string.long_click_msg) + " " + pos + ". element listy", Toast.LENGTH_SHORT).show();
+        TaskListContent.removeItem(currentItemPosition);}
         ((TaskFragment) getSupportFragmentManager().findFragmentById(R.id.taskFragment)).notifyDataChange();
     }
 
