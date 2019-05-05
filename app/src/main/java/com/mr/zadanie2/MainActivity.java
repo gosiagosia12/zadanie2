@@ -12,7 +12,18 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.mr.zadanie2.tasks.TaskListContent;
+
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.lang.reflect.Type;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity
         implements
@@ -22,6 +33,9 @@ public class MainActivity extends AppCompatActivity
     private TaskListContent.Task currentTask;
     private final String CURRENT_TASK_KEY = "CurrentTask";
     public static final int CONTACT_REQUEST = 1;
+    private final String TASKS_JSON_FILE = "tasks.json";
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,14 +43,13 @@ public class MainActivity extends AppCompatActivity
         if (savedInstanceState != null) {
             currentTask = savedInstanceState.getParcelable(CURRENT_TASK_KEY);
         }
+        restoreFromJson();
         FloatingActionButton fabAdd = findViewById(R.id.fabAdd);
         fabAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getApplicationContext(), ActivityAdd.class);
-                Intent in = new Intent();
-                in.putExtra("Camera", false);
-                setResult(RESULT_OK, in);
+                intent.putExtra("Camera", true);
                 startActivityForResult(intent, CONTACT_REQUEST);
             }
         });
@@ -46,9 +59,6 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getApplicationContext(), ActivityAdd.class);
-                Intent in = new Intent();
-                in.putExtra("Camera", true);
-                setResult(RESULT_OK, in);
                 startActivityForResult(intent, CONTACT_REQUEST);
             }
         });
@@ -58,18 +68,33 @@ public class MainActivity extends AppCompatActivity
         if(resultCode == RESULT_OK){
             String taskTitle = data.getStringExtra("taskTitle");
             String taskDirector = data.getStringExtra("taskDirector");
-      //      String taskPremiere = data.getStringExtra("taskPremiere");
+            String taskPremiere = data.getStringExtra("taskPremiere");
             String selectedImage = data.getStringExtra("selectedImage");
-            if(taskTitle.isEmpty() && taskDirector.isEmpty()/* && taskPremiere.isEmpty()*/){
-                TaskListContent.addItem(new TaskListContent.Task("Task." + TaskListContent.ITEMS.size() + 1, getString(R.string.default_title), getString(R.string.default_director)/*, getString(R.string.default_premiere)*/, selectedImage));
+            String picPath = data.getStringExtra("picPath");
+
+            if(picPath == null){
+                if(taskTitle.isEmpty() && taskDirector.isEmpty() && taskPremiere.isEmpty()){
+                    TaskListContent.addItem(new TaskListContent.Task("Task." + TaskListContent.ITEMS.size() + 1, getString(R.string.default_title), getString(R.string.default_director), getString(R.string.default_premiere), selectedImage));
+                }else{
+                    if(taskTitle.isEmpty())
+                        taskTitle = getString(R.string.default_title);
+                    if(taskDirector.isEmpty())
+                        taskDirector = getString(R.string.default_director);
+                    if(taskPremiere.isEmpty())
+                        taskPremiere = getString(R.string.default_premiere);
+                    TaskListContent.addItem(new TaskListContent.Task("Task." + TaskListContent.ITEMS.size() + 1, taskTitle, taskDirector, taskPremiere, selectedImage));
+                }
+            }else
+            if(taskTitle.isEmpty() && taskDirector.isEmpty() && taskPremiere.isEmpty()){
+                TaskListContent.addItem(new TaskListContent.Task("Task." + TaskListContent.ITEMS.size() + 1, getString(R.string.default_title), getString(R.string.default_director), getString(R.string.default_premiere), picPath));
             }else{
                 if(taskTitle.isEmpty())
                     taskTitle = getString(R.string.default_title);
                 if(taskDirector.isEmpty())
                     taskDirector = getString(R.string.default_director);
-         //       if(taskPremiere.isEmpty())
-         //           taskPremiere = getString(R.string.default_premiere);
-                TaskListContent.addItem(new TaskListContent.Task("Task." + TaskListContent.ITEMS.size() + 1, taskTitle, taskDirector/*, taskPremiere*/, selectedImage));
+                       if(taskPremiere.isEmpty())
+                           taskPremiere = getString(R.string.default_premiere);
+                TaskListContent.addItem(new TaskListContent.Task("Task." + TaskListContent.ITEMS.size() + 1, taskTitle, taskDirector, taskPremiere, picPath));
             }
             ((TaskFragment) getSupportFragmentManager().findFragmentById(R.id.taskFragment)).notifyDataChange();
         }
@@ -77,22 +102,72 @@ public class MainActivity extends AppCompatActivity
     }
 
 
+    private void saveTasksToJson(){
+        Gson gson = new Gson();
+        String listJson = gson.toJson(TaskListContent.ITEMS);
+        FileOutputStream outputStream;
+        try{
+            outputStream = openFileOutput(TASKS_JSON_FILE, MODE_PRIVATE);
+            FileWriter writer = new FileWriter(outputStream.getFD());
+            writer.write(listJson);
+            writer.close();
+        }catch (FileNotFoundException e){
+            e.printStackTrace();
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+    }
+
+    private void restoreFromJson(){
+        FileInputStream inputStream;
+        int DEFAULT_BUFFER_SIZE = 10000;
+        Gson gson = new Gson();
+        String readJson;
+
+        try {
+            inputStream = openFileInput(TASKS_JSON_FILE);
+            FileReader reader = new FileReader(inputStream.getFD());
+            char[] buf = new char[DEFAULT_BUFFER_SIZE];
+            int n;
+            StringBuilder builder = new StringBuilder();
+            while ((n = reader.read(buf)) >= 0) {
+                String tmp = String.valueOf(buf);
+                String substring = (n < DEFAULT_BUFFER_SIZE) ? tmp.substring(0, n) : tmp;
+                builder.append(substring);
+            }
+            reader.close();
+            readJson = builder.toString();
+            Type collectionType = new TypeToken<List<TaskListContent.Task>>() {
+            }.getType();
+            List<TaskListContent.Task> o = gson.fromJson(readJson, collectionType);
+            if (o != null) {
+                TaskListContent.clearList();
+                for (TaskListContent.Task task : o) {
+                    TaskListContent.addItem(task);
+                }
+            }
+        }catch(FileNotFoundException e){
+                e.printStackTrace();
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+    }
+
+    protected void onDestroy(){
+        saveTasksToJson();
+        super.onDestroy();
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
         }

@@ -16,68 +16,48 @@ import java.util.Map;
  */
 public class TaskListContent {
 
-    /**
-     * An array of sample (dummy) items.
-     */
-
-
-
     public static final List<Task> ITEMS = new ArrayList<Task>();
 
-    /**
-     * A map of sample (dummy) items, by ID.
-     */
     public static final Map<String, Task> ITEM_MAP = new HashMap<String, Task>();
 
-    private static final int COUNT = 5;
-
-    static {
-        // Add some sample items.
-        for (int i = 1; i <= COUNT; i++) {
-            addItem(createTask(i));
-        }
-    }
+    private static final int COUNT = 1;
 
     public static void addItem(Task item) {
         ITEMS.add(item);
         ITEM_MAP.put(item.id, item);
     }
 
-    private static Task createTask(int position) {
-        return new Task(String.valueOf(position), "Item " + position, makeDetails(position));
+    private static Task createTask(int position, String title, String director, String premiere, String picPath) {
+        return new Task(String.valueOf(position), title, director, premiere, picPath);
     }
 
     private static String makeDetails(int position) {
         StringBuilder builder = new StringBuilder();
         builder.append("Details about Item: ").append(position);
-        for (int i = 0; i < position; i++) {
-            builder.append("\nMore details information here.");
-        }
+     //   for (int i = 0; i < position; i++) {
+            builder.append("\nInformation about film.");
         return builder.toString();
     }
 
-    /**
-     * A dummy item representing a piece of content.
-     */
     public static class Task implements Parcelable {
         public final String id;
         public final String title;
         public final String director;
-      //  public final String premiere;
+        public final String premiere;
         public String picPath;
 
-        public Task(String id, String title, String director/*, String premiere*/) {
+        public Task(String id, String title, String director, String premiere) {
             this.id = id;
             this.title = title;
             this.director = director;
-         //   this.premiere = premiere;
+            this.premiere = premiere;
             this.picPath = "";
         }
-        public Task(String id, String title, String director/*, String premiere*/, String picPath) {
+        public Task(String id, String title, String director, String premiere, String picPath) {
             this.id = id;
             this.title = title;
             this.director = director;
-       //     this.premiere = premiere;
+            this.premiere = premiere;
             this.picPath = picPath;
         }
 
@@ -85,7 +65,7 @@ public class TaskListContent {
             id = in.readString();
             title = in.readString();
             director = in.readString();
-        //    premiere = in.readString();
+            premiere = in.readString();
             picPath = in.readString();
         }
 
@@ -111,7 +91,7 @@ public class TaskListContent {
             dest.writeString(id);
             dest.writeString(title);
             dest.writeString(director);
-        //    dest.writeString(premiere);
+            dest.writeString(premiere);
             dest.writeString(picPath);
         }
 
